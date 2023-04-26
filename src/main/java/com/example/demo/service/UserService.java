@@ -25,21 +25,22 @@ public class UserService implements  IUserService{
     @Autowired
     private ModelMapper modelMapper;
 
+//    private static final Logger logger
+//            = LoggerFactory.getLogger(UserService.class);
+
     //Create new user
     public UserDTO saveUser(UserDTO userDTO){
-        try{
+
            User userCreated = userRepo.save(modelMapper.map(userDTO, User.class));
             return modelMapper.map(userCreated, UserDTO.class);
 
             //created user id should be filled in respond
-        }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
+
     }
 
     //Get user list
     public List<UserDTO> getUser(){
-        try{
+
             List<User> userList = new ArrayList<User>();
 
             userList = userRepo.findAll();
@@ -48,9 +49,7 @@ public class UserService implements  IUserService{
                 throw new ResourceNotFoundException("Not found data");
             }
             return  modelMapper.map(userList, new TypeToken<List<UserDTO>>(){}.getType());
-        }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
+
     }
 
     //get single user
@@ -59,7 +58,10 @@ public class UserService implements  IUserService{
 
         System.out.println(singleUser);
         if(singleUser.isPresent()){
-            return modelMapper.map(singleUser, UserDTO.class);
+            User userEntity = singleUser.get();
+            UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
+            System.out.println(userDTO.getAddress());
+            return userDTO;
         }else{
             throw new ResourceNotFoundException("Not found data");
         }
@@ -67,35 +69,32 @@ public class UserService implements  IUserService{
 
     //Update user
     public UserDTO updateUser(int id, UserDTO userDTO){
-       try{
 
            Optional<User> user = userRepo.findById(id);
 
            if(user.isPresent()){
-              User updatedUser = userRepo.save(modelMapper.map(userDTO, User.class));
-               return modelMapper.map(updatedUser, UserDTO.class);
+               User userEntity = user.get();
+               userEntity.setName(userDTO.getName());
+               userEntity.setAddress(userDTO.getAddress());
+               UserDTO updatedUserDTO = modelMapper.map(userRepo.save(userEntity), UserDTO.class);
+               return updatedUserDTO;
            }
            throw new RuntimeException("Item not found");
 
-       }catch (Exception e){
-           throw new RuntimeException(e.getMessage());
-       }
+
     }
 
     //Delete user
     public boolean deleteUser(int id){
-       try{
+
           userRepo.deleteById(id);
            return true;
-       }catch (Exception e){
-           throw new RuntimeException(e.getMessage());
-       }
+
     }
 
     //Filter user by name
     public List<UserDTO> filterUserByName(String name){
         System.out.println("at getFilteredUsers");
-        try{
 
             List<User> userList = new ArrayList<User>();
 
@@ -109,18 +108,15 @@ public class UserService implements  IUserService{
             System.out.println(userList.get(0).getId()+userList.get(0).getAddress()+userList.get(0).getName());
             System.out.println("complete");
             return  modelMapper.map(userList, new TypeToken<List<UserDTO>>(){}.getType());
-        }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
+
     }
 
-    public List<UserDTO> filterUserByAddress(String name){
+    public List<UserDTO> filterUserByAddress(String address){
         System.out.println("at getFilteredUsers");
-        try{
 
             List<User> userList = new ArrayList<User>();
 
-            userList = userRepo.findByAddress(name);
+            userList = userRepo.findByAddress(address);
             System.out.println(userList);
 
             if (userList.isEmpty()) {
@@ -130,9 +126,7 @@ public class UserService implements  IUserService{
             System.out.println(userList.get(0).getId()+userList.get(0).getAddress()+userList.get(0).getName());
             System.out.println("complete");
             return  modelMapper.map(userList, new TypeToken<List<UserDTO>>(){}.getType());
-        }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
+
     }
 
 }

@@ -14,9 +14,6 @@ public class DemoApplication {
 	}
 
 	//inject the model mapper. this used to bind the entity class and dto class
-	@Bean
-	public ModelMapper modelMapper(){
-		return new ModelMapper();
-	}
+
 
 }
