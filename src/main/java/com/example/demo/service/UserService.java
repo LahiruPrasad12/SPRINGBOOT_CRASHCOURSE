@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.UserController;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.ResourceNotFoundException;
@@ -7,6 +8,8 @@ import com.example.demo.repository.UserRepo;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,9 @@ import java.util.Optional;
 @Service
 @Transactional
 public class UserService implements  IUserService{
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
 
     //This auto wired annotation used to inject another class
     @Autowired
@@ -54,6 +60,7 @@ public class UserService implements  IUserService{
 
     //get single user
     public UserDTO getSingleUser(int id){
+        logger.info("at getSingleUser");
         Optional<User> singleUser  = userRepo.findById(id);
 
         System.out.println(singleUser);
@@ -86,7 +93,7 @@ public class UserService implements  IUserService{
 
     //Delete user
     public boolean deleteUser(int id){
-
+        logger.info("at deleteUser");
           userRepo.deleteById(id);
            return true;
 
@@ -94,7 +101,7 @@ public class UserService implements  IUserService{
 
     //Filter user by name
     public List<UserDTO> filterUserByName(String name){
-        System.out.println("at getFilteredUsers");
+        logger.info("at filterUserByName");
 
             List<User> userList = new ArrayList<User>();
 
@@ -105,14 +112,13 @@ public class UserService implements  IUserService{
                 System.out.println("empty");
                 throw new ResourceNotFoundException("Not found data");
             }
-            System.out.println(userList.get(0).getId()+userList.get(0).getAddress()+userList.get(0).getName());
-            System.out.println("complete");
+            logger.info(userList.get(0).getId()+userList.get(0).getAddress()+userList.get(0).getName());
             return  modelMapper.map(userList, new TypeToken<List<UserDTO>>(){}.getType());
 
     }
 
     public List<UserDTO> filterUserByAddress(String address){
-        System.out.println("at getFilteredUsers");
+        logger.info("at getFilteredUsers");
 
             List<User> userList = new ArrayList<User>();
 

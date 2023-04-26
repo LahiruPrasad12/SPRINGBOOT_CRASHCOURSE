@@ -30,7 +30,6 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getUser(){
         logger.info("at getUser");
-        logger.debug("at getUser debug");
        List<UserDTO>  userList = userService.getUser();
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
